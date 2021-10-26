@@ -12,31 +12,27 @@ RUN yum -y install git
 # Expecting kmod software version as an input to the build
 ARG KMODVER
 
-# Grab the software from upstream
-RUN git clone https://github.com/openshift-psap/simple-kmod.git
-WORKDIR simple-kmod
-
 # Expecting kernel version as an input to the build
 ARG KVER
 
-# Note, your host must have access to repos where kernel developement
-# packages can be installed. If it doesn't the following steps will
-# fail
+RUN echo $KMODVER > /etc/dnf/vars/auristorver
 
-# Prep and build the module
-RUN yum install -y make sudo
-RUN make buildprep KVER=${KVER} KMODVER=${KMODVER}
-RUN make all       KVER=${KVER} KMODVER=${KMODVER}
-RUN make install   KVER=${KVER} KMODVER=${KMODVER}
+RUN wget https://www.auristor.com/filesystem/GPG/AURISTOR-GPG-KEY-v1 -O /tmp/AURISTOR-GPG-KEY-v1  && rpm --import /tmp/AURISTOR-GPG-KEY-v1
+
+ADD auristor.repo /build/
+
+RUN yum -y install wget git make sudo 
+
+RUN export KERN=`echo KVER |sed s/-/_/g|sed s/.x86_64//` && export RPMVERS=`yum list kmod-yfs-KMODVER --showduplicates |grep $KERN |awk '{print $2}'|sort -r|head -1` && yum install yfs-client kmod-yfs-${RPMVERS}
 
 # Add the helper tools
 WORKDIR /root/kvc-simple-kmod
 ADD Makefile .
-ADD simple-kmod-lib.sh .
-ADD simple-kmod-wrapper.sh .
-ADD simple-kmod.conf .
+ADD auristor-client-lib.sh .
+ADD auristor-client-wrapper.sh .
+ADD auristor-client.conf .
 RUN mkdir -p /usr/lib/kvc/
 RUN mkdir -p /etc/kvc/
 RUN make install
 
-RUN systemctl enable kmods-via-containers@simple-kmod
+RUN systemctl enable kmods-via-containers@auristor-client
