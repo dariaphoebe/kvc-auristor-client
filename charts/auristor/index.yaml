@@ -1,0 +1,15 @@
+apiVersion: v1
+entries:
+  auristor-client:
+  - apiVersion: v1
+    appVersion: 0.0.1
+    created: "2021-10-14T13:34:51.346287194+05:30"
+    description: Support for the AuriStor FS client
+    digest: c659048fe88ca8bc697504d55ad6bc171a9bd27105b33807f3e5e77eee1fab42
+    icon: https://avatars.githubusercontent.com/u/55542927
+    name: auristor-client
+    type: application
+    urls:
+    - file:///charts/auristor/auristor-client-0.0.1.tgz
+    version: 0.0.1
+generated: "2021-10-14T13:34:51.345802654+05:30"
