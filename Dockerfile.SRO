@@ -23,7 +23,7 @@ ADD auristor.repo /build/
 
 RUN yum -y install wget git make sudo 
 
-RUN export KERN=`echo KVER |sed s/-/_/g|sed s/.x86_64//` && export RPMVERS=`yum list kmod-yfs-KMODVER --showduplicates |grep $KERN |awk '{print $2}'|sort -r|head -1` && yum install yfs-client kmod-yfs-${RPMVERS}
+RUN export KERN=`echo $KVER |sed s/-/_/g|sed s/.x86_64//` && export RPMVERS=`yum list kmod-yfs-$KMODVER --showduplicates |grep $KERN |awk '{print $2}'|sort -r|head -1` && yum install yfs-client kmod-yfs-${RPMVERS}
 
 # Add the helper tools
 WORKDIR /root/kvc-auristor-client
